@@ -17,6 +17,8 @@ tile2_img = pygame.image.load("./assets/2.png").convert_alpha()
 tile2_img = pygame.transform.scale(tile2_img, (rez, rez))
 tile3_img = pygame.image.load("./assets/3.png").convert_alpha()
 tile3_img = pygame.transform.scale(tile3_img, (rez, rez))
+tile4_img = pygame.image.load("./assets/4.png").convert_alpha()
+tile4_img = pygame.transform.scale(tile4_img, (rez, rez))
 
 
 def main():
@@ -24,7 +26,8 @@ def main():
     tile1 = Tile(tile1_img)
     tile2 = Tile(tile2_img)
     tile3 = Tile(tile3_img)
-    options = [tile0, tile1, tile2, tile3]
+    tile4 = Tile(tile4_img)
+    options = [tile0, tile1, tile2, tile3, tile4]
     wave = Grid(width, height, rez, options)
 
     wave.initiate()

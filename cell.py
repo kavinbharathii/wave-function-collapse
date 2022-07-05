@@ -15,11 +15,11 @@ class Cell:
         else:
             pygame.draw.rect(win, (100, 100, 100), (self.x * self.rez, self.y * self.rez, self.rez, self.rez), 2)
 
-    def entrophy(self):
+    def entropy(self):
         return len(self.options)
 
     def update(self):
-        self.collapsed = bool(self.entrophy() == 1)
+        self.collapsed = bool(self.entropy() == 1)
 
     def observe(self):
         self.options = [random.choice(self.options)]

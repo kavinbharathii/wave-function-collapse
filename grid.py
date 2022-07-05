@@ -1,5 +1,7 @@
 import copy
 import random
+
+from matplotlib.pyplot import grid
 from cell import Cell
 
 class Grid:
@@ -26,13 +28,13 @@ class Grid:
 
     def random_pick(self):
         grid_copy = [i for row in self.grid for i in row]
-        grid_copy.sort(key = lambda x:x.entrophy())
+        grid_copy.sort(key = lambda x:x.entropy())
 
         for i in grid_copy:
-            if i.entrophy() == 1:
+            if i.entropy() == 1:
                 grid_copy.remove(i)
                 
-        filtered_grid = list(filter(lambda x:x.entrophy()==grid_copy[0].entrophy(), grid_copy))
+        filtered_grid = list(filter(lambda x:x.entropy()==grid_copy[0].entropy(), grid_copy))
         pick = random.choice(filtered_grid)
         return pick
 

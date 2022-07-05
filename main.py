@@ -1,38 +1,42 @@
-
 from grid import Grid
 from tile import Tile
 import pygame
 
 width = 600
 height = 600
-rez = 20
+rez = 300
 display = pygame.display.set_mode((width, height))
 
-
-tile0_img = pygame.image.load("./assets/0.png").convert_alpha()
-tile0_img = pygame.transform.scale(tile0_img, (rez, rez))
-tile1_img = pygame.image.load("./assets/1.png").convert_alpha()
-tile1_img = pygame.transform.scale(tile1_img, (rez, rez))
-tile2_img = pygame.image.load("./assets/2.png").convert_alpha()
-tile2_img = pygame.transform.scale(tile2_img, (rez, rez))
-tile3_img = pygame.image.load("./assets/3.png").convert_alpha()
-tile3_img = pygame.transform.scale(tile3_img, (rez, rez))
-tile4_img = pygame.image.load("./assets/4.png").convert_alpha()
-tile4_img = pygame.transform.scale(tile4_img, (rez, rez))
+def load_image(path, rez_):
+    img = pygame.image.load(path).convert_alpha()
+    img = pygame.transform.scale(img, (rez_, rez_))
+    return img
 
 
 def main():
-    tile0 = Tile(tile0_img)
-    tile1 = Tile(tile1_img)
-    tile2 = Tile(tile2_img)
-    tile3 = Tile(tile3_img)
-    tile4 = Tile(tile4_img)
-    options = [tile0, tile1, tile2, tile3, tile4]
+    # loading tile images
+    options = []
+    for i in range(5):
+        img = load_image(f"./assets/{i}.png", rez)
+        options.append(Tile(img))
+
+    # rule set
+    options[0].edges = [0, 0, 0, 0]
+    options[1].edges = [1, 1, 0, 1]
+    options[2].edges = [1, 1, 1, 0]
+    options[3].edges = [0, 1, 1, 1]
+    options[4].edges = [1, 0, 1, 1]
+
+    for tile in options:
+        tile.set_rules(options)
+
+    # wave grid
     wave = Grid(width, height, rez, options)
-
     wave.initiate()
-    loop = True
+    wave.collapse()
 
+    # game loop
+    loop = True
     while loop:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -41,4 +45,6 @@ def main():
         wave.draw(display)
         pygame.display.flip()
 
-main()
+
+if __name__ == "__main__":
+    main()

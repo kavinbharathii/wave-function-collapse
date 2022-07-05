@@ -1,7 +1,5 @@
 import copy
 import random
-
-from matplotlib.pyplot import grid
 from cell import Cell
 
 class Grid:

@@ -3,6 +3,7 @@
 class Tile:
     def __init__(self, img):
         self.img = img
+        self.index = -1
         self.edges = []
         self.up = []
         self.right = []

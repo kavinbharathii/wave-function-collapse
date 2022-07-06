@@ -35,7 +35,7 @@ class Grid:
 
         filtered_grid = list(filter(lambda x:not x.collapsed, grid_copy))
         if filtered_grid != []:
-            filtered_grid = list(filter(lambda x:x.entropy()==filtered_grid[0].entropy(), grid_copy))                
+            filtered_grid = list(filter(lambda x:x.entropy()==filtered_grid[0].entropy(), filtered_grid))                
             pick = random.choice(filtered_grid)
             return pick
         else:
@@ -44,7 +44,7 @@ class Grid:
 
     def collapse(self):
         pick = self.random_pick()
-
+    
         if pick:
             self.grid[pick.x][pick.y].observe()
         else:
@@ -58,48 +58,42 @@ class Grid:
                     next_grid[i][j] = self.grid[i][j]
 
                 else:
-                    cell = self.grid[i][j]
-
-                    if cell.entropy() == 1:
-                        cell.update()
-                        break
-
+                    cumulative_valid_options = self.options
                     # check above cell
-                    try:
+                    if i > 1:
                         cell_above = self.grid[i - 1][j]
-                        if cell_above.collapsed:
-                            valid_options = cell_above.below
-                            cell.options = [option for option in cell.options if option in valid_options]
-                    except:
-                        pass
+                        valid_options = []
+                        for option in cell_above.options:
+                            valid_options.extend(option.down)
+                        cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
 
                     # check right cell
-                    try:
+                    if j < self.h - 1:
                         cell_right = self.grid[i][j + 1]
-                        if cell_right.collapsed:
-                            valid_options = cell_above.left
-                            cell.options = [option for option in cell.options if option in valid_options]
-                    except:
-                        pass
+                        valid_options = []
+                        for option in cell_right.options:
+                            valid_options.extend(option.left)
+                        cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
 
                     # check down cell
-                    try:
+                    if i < self.w - 1:
                         cell_down = self.grid[i + 1][j]
-                        if cell_down.collapsed:
-                            valid_options = cell_above.up
-                            cell.options = [option for option in cell.options if option in valid_options]
-                    except:
-                        pass          
+                        valid_options = []
+                        for option in cell_down.options:
+                            valid_options.extend(option.up)
+                        cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
 
                     # check left cell
-                    try:
+                    if j > 1:
                         cell_left = self.grid[i][j - 1]
-                        if cell_left.collapsed:
-                            valid_options = cell_above.right
-                            cell.options = [option for option in cell.options if option in valid_options]
-                    except:
-                        pass 
+                        valid_options = []
+                        for option in cell_left.options:
+                            valid_options.extend(option.right)
+                        cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
 
-                    # print(cell.x, cell.y, cell.collapsed, [i.edges for i in cell.options])
+                    # print()
+                    # print([opt.index for opt in cumulative_valid_options])
+                    next_grid[i][j].options = cumulative_valid_options
+                    next_grid[i][j].update()
 
         self.grid = copy.copy(next_grid)

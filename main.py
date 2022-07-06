@@ -6,7 +6,7 @@ font = pygame.font.Font("./assets/custom_fonts/Poppins/Poppins-Light.ttf", 16)
 
 width = 600
 height = 600
-rez = 60
+rez = 50
 display = pygame.display.set_mode((width, height))
 
 def load_image(path, rez_):
@@ -36,33 +36,29 @@ def main():
     # loading tile images
     options = []
     for i in range(5):
-        img = load_image(f"./assets/{i}.png", rez)
+        img = load_image(f"./assets/c{i}.png", rez)
         options.append(Tile(img))
 
     # rule set
     options[0].edges = [0, 0, 0, 0]
-    options[1].edges = [1, 1, 0, 1]
-    options[2].edges = [1, 1, 1, 0]
-    options[3].edges = [0, 1, 1, 1]
-    options[4].edges = [1, 0, 1, 1]
+    options[1].edges = [1, 1, 0, 0]
+    options[2].edges = [0, 1, 1, 0]
+    options[3].edges = [0, 0, 1, 1]
+    options[4].edges = [1, 0, 0, 1]
 
-    for tile in options:
+    for i, tile in enumerate(options):
+        tile.index = i 
         tile.set_rules(options)
 
     # wave grid
     wave = Grid(width, height, rez, options)
     wave.initiate()
 
-    # for row in wave.grid:
-    #     for cell in row:
-    #         print((cell.x, cell.y, cell.collapsed), end=" ")
-    #     print()
-
     # game loop
     loop = True
-    clock = pygame.time.Clock()
+    # clock = pygame.time.Clock()
     while loop:
-        clock.tick(1)
+        # clock.tick(1)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 loop = False
@@ -70,10 +66,10 @@ def main():
 
         wave.draw(display)
         wave.collapse()
-        # mos_pos = pygame.mouse.get_pos()
-        # hover(mos_pos, rez, wave)
-        pygame.display.flip()
 
+        mos_pos = pygame.mouse.get_pos()
+        hover(mos_pos, rez, wave)
+        pygame.display.flip()
 
 if __name__ == "__main__":
     main()

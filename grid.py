@@ -20,9 +20,9 @@ class Grid:
                 self.grid[i].append(cell)
 
     def draw(self, win):
-        for i in range(self.w):
-            for j in range(self.h):
-                self.grid[i][j].draw(win)
+        for row in self.grid:
+            for cell in row:
+                cell.draw(win)
 
     def random_pick(self):
         grid_copy = [i for row in self.grid for i in row]
@@ -32,13 +32,23 @@ class Grid:
             if i.entropy() == 1:
                 grid_copy.remove(i)
                 
-        filtered_grid = list(filter(lambda x:x.entropy()==grid_copy[0].entropy(), grid_copy))
-        pick = random.choice(filtered_grid)
-        return pick
+
+        filtered_grid = list(filter(lambda x:not x.collapsed, grid_copy))
+        if filtered_grid != []:
+            filtered_grid = list(filter(lambda x:x.entropy()==filtered_grid[0].entropy(), grid_copy))                
+            pick = random.choice(filtered_grid)
+            return pick
+        else:
+            return None
+
 
     def collapse(self):
         pick = self.random_pick()
-        self.grid[pick.x][pick.y].observe()
+
+        if pick:
+            self.grid[pick.x][pick.y].observe()
+        else:
+            return
 
         next_grid = copy.copy(self.grid)
 
@@ -50,13 +60,16 @@ class Grid:
                 else:
                     cell = self.grid[i][j]
 
+                    if cell.entropy() == 1:
+                        cell.update()
+                        break
+
                     # check above cell
                     try:
                         cell_above = self.grid[i - 1][j]
                         if cell_above.collapsed:
-                            for option in cell.options:
-                                if option not in cell_above.options[0].below:
-                                    cell.options.remove(option)
+                            valid_options = cell_above.below
+                            cell.options = [option for option in cell.options if option in valid_options]
                     except:
                         pass
 
@@ -64,33 +77,29 @@ class Grid:
                     try:
                         cell_right = self.grid[i][j + 1]
                         if cell_right.collapsed:
-                            for option in cell.options:
-                                if option not in cell_right.options[0].left:
-                                    cell.options.remove(option)
+                            valid_options = cell_above.left
+                            cell.options = [option for option in cell.options if option in valid_options]
                     except:
                         pass
 
                     # check down cell
                     try:
-                        cell_down = self.grid[i][j + 1]
+                        cell_down = self.grid[i + 1][j]
                         if cell_down.collapsed:
-                            for option in cell.options:
-                                if option not in cell_down.options[0].up:
-                                    cell.options.remove(option)
+                            valid_options = cell_above.up
+                            cell.options = [option for option in cell.options if option in valid_options]
                     except:
                         pass          
 
                     # check left cell
                     try:
-                        cell_left = self.grid[i][j + 1]
+                        cell_left = self.grid[i][j - 1]
                         if cell_left.collapsed:
-                            for option in cell.options:
-                                if option not in cell_left.options[0].right:
-                                    cell.options.remove(option)
+                            valid_options = cell_above.right
+                            cell.options = [option for option in cell.options if option in valid_options]
                     except:
                         pass 
 
-                    if len(cell.options) == 1:
-                        cell.collapsed = True
+                    # print(cell.x, cell.y, cell.collapsed, [i.edges for i in cell.options])
 
-        self.grid = next_grid
+        self.grid = copy.copy(next_grid)

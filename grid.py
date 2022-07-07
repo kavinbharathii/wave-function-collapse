@@ -1,7 +1,13 @@
+
+# --------------------------------------------------------------------------------- #
+# required libraries
 import copy
 import random
 from cell import Cell
 
+# --------------------------------------------------------------------------------- #
+
+# Grid class
 class Grid:
     def __init__(self, width, height, rez, options):
         self.width = width
@@ -12,6 +18,7 @@ class Grid:
         self.grid = []
         self.options = options
 
+    # initiate each spot in the grid with a cell object
     def initiate(self):
         for i in range(self.w):
             self.grid.append([])
@@ -19,21 +26,28 @@ class Grid:
                 cell = Cell(i, j, self.rez, self.options)
                 self.grid[i].append(cell)
 
+    # draw each cell in the grid
     def draw(self, win):
         for row in self.grid:
             for cell in row:
                 cell.draw(win)
 
+    # randomly pick a cell using [entropy heuristic]
     def random_pick(self):
+
+        # shallow copy of a grid
         grid_copy = [i for row in self.grid for i in row]
         grid_copy.sort(key = lambda x:x.entropy())
 
+        # remove collapsed cells
         for i in grid_copy:
             if i.entropy() == 1:
                 grid_copy.remove(i)
-                
+        
 
         filtered_grid = list(filter(lambda x:not x.collapsed, grid_copy))
+        
+        # return a pick if filtered copy os not empty
         if filtered_grid != []:
             filtered_grid = list(filter(lambda x:x.entropy()==filtered_grid[0].entropy(), filtered_grid))                
             pick = random.choice(filtered_grid)
@@ -41,17 +55,20 @@ class Grid:
         else:
             return None
 
-
+    # [WAVE FUNCTION COLLAPSE] algorithm
     def collapse(self):
+
+        # pick a random cell using entropy heuristic
         pick = self.random_pick()
-    
         if pick:
             self.grid[pick.x][pick.y].observe()
         else:
             return
 
+        # shallow copy of the gris
         next_grid = copy.copy(self.grid)
 
+        # update the entropy values and superpositions of each cell in the grid
         for i in range(len(self.grid)):
             for j in range(len(self.grid[0])):
                 if self.grid[i][j].collapsed:
@@ -91,9 +108,8 @@ class Grid:
                             valid_options.extend(option.right)
                         cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
 
-                    # print()
-                    # print([opt.index for opt in cumulative_valid_options])
                     next_grid[i][j].options = cumulative_valid_options
                     next_grid[i][j].update()
 
+        # re-assign the grid value after cell evaluation
         self.grid = copy.copy(next_grid)

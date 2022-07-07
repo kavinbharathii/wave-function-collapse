@@ -1,4 +1,5 @@
 
+# --------------------------------------------------------------------------------- #
 
 class Tile:
     def __init__(self, img):
@@ -10,9 +11,11 @@ class Tile:
         self.down = []
         self.left = []
 
+    # draw a single tile
     def draw(self, win, x, y):
         win.blit(self.img, (x, y))
 
+    # set the rules for each tile
     def set_rules(self, tiles):
         for tile in tiles:
             # up

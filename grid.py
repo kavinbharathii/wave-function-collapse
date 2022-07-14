@@ -33,7 +33,7 @@ class Grid:
                 cell.draw(win)
 
     # randomly pick a cell using [entropy heuristic]
-    def random_pick(self):
+    def heuristic_pick(self):
 
         # shallow copy of a grid
         grid_copy = [i for row in self.grid for i in row]
@@ -59,7 +59,7 @@ class Grid:
     def collapse(self):
 
         # pick a random cell using entropy heuristic
-        pick = self.random_pick()
+        pick = self.heuristic_pick()
         if pick:
             self.grid[pick.x][pick.y].observe()
         else:
@@ -75,39 +75,39 @@ class Grid:
                     next_grid[i][j] = self.grid[i][j]
 
                 else:
+                    # cumulative_valid_options will hold the options that will satisfy the "down", "right", "up", "left" 
+                    # conditions of each cell in the grid. The cumulative_valid_options is computed by,
+
                     cumulative_valid_options = self.options
                     # check above cell
-                    if i > 1:
-                        cell_above = self.grid[i - 1][j]
-                        valid_options = []
-                        for option in cell_above.options:
-                            valid_options.extend(option.down)
-                        cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
+                    cell_above = self.grid[(i - 1) % self.w][j]
+                    valid_options = []                          # holds the valid options for the current cell to fit with the above cell
+                    for option in cell_above.options:
+                        valid_options.extend(option.down)
+                    cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
 
                     # check right cell
-                    if j < self.h - 1:
-                        cell_right = self.grid[i][j + 1]
-                        valid_options = []
-                        for option in cell_right.options:
-                            valid_options.extend(option.left)
-                        cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
+                    cell_right = self.grid[i][(j + 1) % self.h]
+                    valid_options = []                          # holds the valid options for the current cell to fit with the right cell
+                    for option in cell_right.options:
+                        valid_options.extend(option.left)
+                    cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
 
                     # check down cell
-                    if i < self.w - 1:
-                        cell_down = self.grid[i + 1][j]
-                        valid_options = []
-                        for option in cell_down.options:
-                            valid_options.extend(option.up)
-                        cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
+                    cell_down = self.grid[(i + 1) % self.w][j]
+                    valid_options = []                          # holds the valid options for the current cell to fit with the down cell
+                    for option in cell_down.options:
+                        valid_options.extend(option.up)
+                    cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
 
                     # check left cell
-                    if j > 1:
-                        cell_left = self.grid[i][j - 1]
-                        valid_options = []
-                        for option in cell_left.options:
-                            valid_options.extend(option.right)
-                        cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
+                    cell_left = self.grid[i][(j - 1) % self.h]
+                    valid_options = []                          # holds the valid options for the current cell to fit with the left cell
+                    for option in cell_left.options:
+                        valid_options.extend(option.right)
+                    cumulative_valid_options = [option for option in cumulative_valid_options if option in valid_options]
 
+                    # finally assign the cumulative_valid_options options to be the current cells valid options
                     next_grid[i][j].options = cumulative_valid_options
                     next_grid[i][j].update()
 

@@ -39,23 +39,29 @@ class Grid:
         grid_copy = [i for row in self.grid for i in row]
         grid_copy.sort(key = lambda x:x.entropy())
 
-        filtered_grid = list(filter(lambda x:not x.collapsed, grid_copy))
-        
-        # return a pick if filtered copy os not empty
-        if filtered_grid != []:
-            filtered_grid = list(filter(lambda x:x.entropy()==filtered_grid[0].entropy(), filtered_grid))                
-            pick = random.choice(filtered_grid)
-            return pick
-        else:
+        filtered_grid = list(filter(lambda x:x.entropy() > 1, grid_copy))
+        if filtered_grid == []:
             return None
+
+        initial = filtered_grid[0]
+        filtered_grid = list(filter(lambda x:x.entropy()==initial.entropy(), filtered_grid))     
+
+        # return a pick if filtered copy os not empty
+        pick = random.choice(filtered_grid)
+        return pick
 
     # [WAVE FUNCTION COLLAPSE] algorithm
     def collapse(self):
 
+        if len(self.collapsed_list) >= self.w * self.h:
+            return
         # pick a random cell using entropy heuristic
         pick = self.heuristic_pick()
         if pick:
-            self.grid[pick.x][pick.y].observe()
+            valid_options_of_pick = self.grid[pick.x][pick.y].options
+            collapsed_tile = self.grid[pick.x][pick.y].observe()
+            self.collapsed_list.append((pick ,collapsed_tile, valid_options_of_pick))
+            # print('forward')
         else:
             return
 

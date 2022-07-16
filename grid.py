@@ -39,12 +39,6 @@ class Grid:
         grid_copy = [i for row in self.grid for i in row]
         grid_copy.sort(key = lambda x:x.entropy())
 
-        # remove collapsed cells
-        for i in grid_copy:
-            if i.entropy() == 1:
-                grid_copy.remove(i)
-        
-
         filtered_grid = list(filter(lambda x:not x.collapsed, grid_copy))
         
         # return a pick if filtered copy os not empty

@@ -23,9 +23,6 @@ class Cell:
         if len(self.options) == 1:
             self.options[0].draw(win, self.y * self.rez, self.x * self.rez)
             
-        else:
-            pygame.draw.rect(win, (0, 0, 0), (self.y * self.rez, self.x * self.rez, self.rez, self.rez))
-
     # return the entropy/the length of options
     def entropy(self):
         return len(self.options)

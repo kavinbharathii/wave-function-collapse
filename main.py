@@ -15,12 +15,12 @@ font = pygame.font.Font("./assets/custom_fonts/Poppins/Poppins-Light.ttf", 16)
 # global variables
 width = 600
 height = 600
-rez = 50
+rez = 30
 display = pygame.display.set_mode((width, height))
 
 # --------------------------------------------------------------------------------- #
 # function for loading images with given resolution/size
-def load_image(path, rez_, padding):
+def load_image(path, rez_, padding = 0):
     img = pygame.image.load(path).convert_alpha()
     img = pygame.transform.scale(img, (rez_ - padding, rez_ - padding))
     return img
@@ -66,10 +66,10 @@ def main():
     options = []
     for i in range(5):
         # load tetris tile
-        img = load_image(f"./assets/{i}.png", rez, 5)
+        img = load_image(f"./assets/{i}.png", rez)
         
         # load corner tile
-        # img = load_image(f"./assets/{i}.png", rez)
+        # img = load_image(f"./assets/c{i}.png", rez)
         options.append(Tile(img))
 
     # edge conditions for tetris tiles
@@ -111,6 +111,10 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d:
                     hover_toggle = not hover_toggle
+
+                if event.key == pygame.K_q:
+                    loop = False
+                    exit()
             
         # grid draw function
         wave.draw(display)

@@ -53,15 +53,11 @@ class Grid:
     # [WAVE FUNCTION COLLAPSE] algorithm
     def collapse(self):
 
-        if len(self.collapsed_list) >= self.w * self.h:
-            return
         # pick a random cell using entropy heuristic
         pick = self.heuristic_pick()
         if pick:
-            valid_options_of_pick = self.grid[pick.x][pick.y].options
-            collapsed_tile = self.grid[pick.x][pick.y].observe()
-            self.collapsed_list.append((pick ,collapsed_tile, valid_options_of_pick))
-            # print('forward')
+            self.grid[pick.x][pick.y].options
+            self.grid[pick.x][pick.y].observe()
         else:
             return
 
